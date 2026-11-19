@@ -1,0 +1,28 @@
+name: Java Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Install Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Compile src and test
+        run: |
+          mkdir -p bin
+          javac -d bin -cp "lib/*" $(find src test -name "*.java")
+
+      - name: Run JUnit tests
+        run: |
+          java -jar lib/junit-platform-console-standalone-*.jar execute \
+            --class-path bin --scan-class-path --disable-banner
